@@ -1,0 +1,89 @@
+# =====================================================================
+#  DANH SACH NGUON BAO CAO
+#  Moi nguon la 1 muc trong "sources". Bat/tat bang "enabled".
+#
+#  3 kieu nguon:
+#   - rss  : trang co RSS feed.         Can: url
+#   - html : trang danh sach bao cao.   Can: url + cac CSS selector
+#   - json : trang tra du lieu JSON.    Can: url + items_path + fields
+#
+#  LUU Y: cac URL/selector ben duoi la MAU, chua duoc kiem tra (cac trang
+#  nay thay doi giao dien thuong xuyen). Cach kiem tra 1 nguon:
+#   GitHub > Actions > "Cap nhat bao cao" > Run workflow > nhap id nguon.
+#   Log se in ra nhung bao cao tim duoc ma KHONG luu gi.
+#
+#  Cach tim selector: mo trang bang Chrome > chuot phai vao 1 dong bao cao
+#  > Inspect > xem the HTML bao quanh (vd: <div class="report-item">)
+# =====================================================================
+
+settings:
+  download_pdf: true        # tai PDF ve luu trong repo (docs/files)
+  max_pdf_mb: 15            # bo qua file lon hon
+  max_items_per_source: 40  # moi lan chay, moi nguon lay toi da N bao cao moi
+  request_delay_sec: 2      # nghi giua cac request, tranh lam phien may chu
+  user_agent: "Mozilla/5.0 (compatible; ResearchHubBot/1.0)"
+
+sources:
+
+  # ---------- Trang tong hop bao cao ----------
+  - id: vietstock
+    name: Vietstock - Bao cao phan tich
+    enabled: false
+    type: html
+    url: https://finance.vietstock.vn/bao-cao-phan-tich
+    item: "table tbody tr"            # moi dong la 1 bao cao
+    title: "td:nth-of-type(2) a"
+    link: "td:nth-of-type(2) a"       # lay href cua the nay
+    date: "td:nth-of-type(1)"
+    broker: "td:nth-of-type(3)"       # cot ten CTCK (neu co)
+    date_format: "%d/%m/%Y"
+
+  - id: cafef
+    name: CafeF - Phan tich bao cao
+    enabled: false
+    type: html
+    url: https://cafef.vn/du-lieu/phan-tich-bao-cao.chn
+    item: ".tbl-report tr, .list-report li"
+    title: "a"
+    link: "a"
+    date: ".date, td:nth-of-type(1)"
+    broker: ".source, td:nth-of-type(3)"
+    date_format: "%d/%m/%Y"
+
+  # ---------- Website tung CTCK / quy ----------
+  # Thay url + selector theo trang "Trung tam phan tich" cua tung cong ty.
+  - id: ctck_mau_html
+    name: CTCK X - Trung tam phan tich (mau)
+    enabled: false
+    type: html
+    broker_name: CTCK X              # ten co dinh neu trang chi cua 1 cong ty
+    url: https://example.com/trung-tam-phan-tich
+    item: ".report-item"
+    title: ".report-title"
+    link: "a[href$='.pdf'], a"
+    date: ".report-date"
+    date_format: "%d/%m/%Y"
+    category: Doanh nghiệp           # tuy chon: ep loai bao cao
+    follow_detail: true              # link dan toi trang chi tiet -> tu tim file PDF trong do
+
+  - id: quy_mau_rss
+    name: Quy Y - Ban tin (mau RSS)
+    enabled: false
+    type: rss
+    broker_name: Quy Y
+    url: https://example.com/feed.xml
+
+  - id: api_mau_json
+    name: Nguon JSON (mau)
+    enabled: false
+    type: json
+    broker_name: CTCK Z
+    url: https://example.com/api/reports?page=1
+    method: GET
+    items_path: data.items           # duong dan toi mang bao cao trong JSON
+    fields:                          # anh xa ten truong
+      title: title
+      link: fileUrl
+      date: publishDate
+      ticker: symbol
+      broker: sourceName

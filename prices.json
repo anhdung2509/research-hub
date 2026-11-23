@@ -1,0 +1,18 @@
+{
+ "updated_at": "2026-11-23T03:43:00+00:00",
+ "source": "FiinX (giá khớp lệnh 23/11/2026 ~10:43)",
+ "prices": {
+  "FPT": {"name": "FPT Corp", "sector": "Phần mềm", "price": 45450, "ytd": -47.62},
+  "HPG": {"name": "Hòa Phát", "sector": "Thép", "price": 20350, "ytd": -13.23},
+  "VCB": {"name": "Vietcombank", "sector": "Ngân hàng", "price": 49700, "ytd": -11.96},
+  "MWG": {"name": "Thế giới di động", "sector": "Bán lẻ", "price": 70200, "ytd": -16.53},
+  "ACB": {"name": "ACB", "sector": "Ngân hàng", "price": 19500, "ytd": -5.22},
+  "TCB": {"name": "Techcombank", "sector": "Ngân hàng", "price": 20600, "ytd": -6.97},
+  "VNM": {"name": "Vinamilk", "sector": "Thực phẩm", "price": 51700, "ytd": -9.35},
+  "MSN": {"name": "Tập đoàn Masan", "sector": "Thực phẩm", "price": 69100, "ytd": -9.22},
+  "GAS": {"name": "PV Gas", "sector": "Dầu khí", "price": 69700, "ytd": 0.2},
+  "SSI": {"name": "Chứng khoán SSI", "sector": "Chứng khoán", "price": 19650, "ytd": -17.28},
+  "VHM": {"name": "Vinhomes", "sector": "Bất động sản", "price": 60000, "ytd": 1.16},
+  "DGC": {"name": "Hóa chất Đức Giang", "sector": "Hóa chất", "price": 30550, "ytd": -45.4}
+ }
+}

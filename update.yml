@@ -1,0 +1,62 @@
+name: Cap nhat bao cao
+
+on:
+  schedule:
+    # Gio UTC. 01:00, 05:00, 10:00 UTC = 8h, 12h, 17h gio Viet Nam, thu 2 - thu 6
+    - cron: "0 1,5,10 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      test_source:
+        description: "Chi chay thu 1 nguon (nhap id trong sources.yaml), de trong = chay tat ca"
+        required: false
+        default: ""
+  push:
+    branches: [main]
+    paths:
+      - "inbox/**"
+      - "sources.yaml"
+      - "docs/data/prices.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-reports
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Thu thap bao cao
+        env:
+          TEST_SOURCE: ${{ github.event.inputs.test_source }}
+          FIINX_PRICE_URL: ${{ secrets.FIINX_PRICE_URL }}
+          FIINX_API_KEY: ${{ secrets.FIINX_API_KEY }}
+        run: |
+          if [ -n "$TEST_SOURCE" ]; then
+            python scripts/update.py --test "$TEST_SOURCE"
+          else
+            python scripts/update.py
+          fi
+
+      - name: Luu ket qua vao repo
+        run: |
+          git config user.name "research-bot"
+          git config user.email "research-bot@users.noreply.github.com"
+          git add -A docs inbox
+          if git diff --cached --quiet; then
+            echo "Khong co gi moi."
+          else
+            git commit -m "Cap nhat bao cao $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
